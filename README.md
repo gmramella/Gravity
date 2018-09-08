@@ -1,97 +1,156 @@
 # Como fazer um clone da Box2D rodar no VS 2015 no Windows com GLFW
 
-## Primeiros passos
+## Localização da solução
 
-[Clonar Box2D do GitHub](https://github.com/erincatto/Box2D) e extrair pasta
+./Build/Box2D.sln
 
-[Baixar binários pré-compilados da GLFW pra versões x32 e x64](https://www.glfw.org/download.html)
+## Concept Doc
 
-Criar pasta glfw na pasta Box2D-master, com subdiretórios 32 e 64
+Idéia misturada de várias mecânicas a partir de:
 
-Copiar pasta include da glfw versão 32 para glfw/32
+* http://www.squidi.net/three/entry.php?id=1
 
-Copiar pasta include da glfw versão 64 para glfw/64
+* http://www.squidi.net/three/entry.php?id=2
 
-Copiar pasta lib-vc2015 da glfw versão 32 para glfw/32
+* http://www.squidi.net/three/entry.php?id=3
 
-Copiar pasta lib-vc2015 da glfw versão 64 para glfw/64
+* http://www.squidi.net/three/entry.php?id=24
 
-## Hierarquia
+* http://www.squidi.net/three/entry.php?id=34
 
-Feitos os passos anteriores, a hierarquia será:
+* http://www.squidi.net/three/entry.php?id=44
 
-	Box2D-master
-	
-		Build
-		
-		glfw
-		
-			32
-			
-				include
-				
-					GLFW
-					
-						glfw3.h
-						
-						glfw3native.h
-						
-				lib-vc2015
-				
-					glfw3.dll
-					
-					glfw3.lib
-					
-					glfw3dll.lib
-					
-			64
-			
-				include
-				
-					GLFW
-					
-						glfw3.h
-						
-						glfw3native.h
-						
-				lib-vc2015
-				
-					glfw3.dll
-					
-					glfw3.lib
-					
-					glfw3dll.lib
-					
-		HelloWorld
-		
-			HelloWorld.cpp
-			
-		...
+* http://www.squidi.net/three/entry.php?id=52
 
-## Últimos passos
+* http://www.squidi.net/three/entry.php?id=56
 
-[Baixar premake versão 5](https://premake.github.io/download.html), extrair executável e colá-lo na pasta Box2D-master
+* http://www.squidi.net/three/entry.php?id=67
 
-Executar comando "premake5 vs2015" na pasta Box2D-master
+* http://www.squidi.net/three/entry.php?id=68
 
-Abrir Box2D.sln da pasta Build criada pelo premake
+* http://www.squidi.net/three/entry.php?id=74
 
-Se o Visual Studio pedir, aceitar redirecionar projetos
+* http://www.squidi.net/three/entry.php?id=77
 
-Definir HelloWorld como projeto de inicialização
+* http://www.squidi.net/three/entry.php?id=85
 
-Verificar se o Visual Studio está debugando em x32 ou x64
+* http://www.squidi.net/three/entry.php?id=86
 
-Provavelmente a Box2D usará x64, neste caso, nos passos a seguir xx significa 64
+* http://www.squidi.net/three/entry.php?id=106
 
-Clicar no projeto HelloWorld na solução
+* http://www.squidi.net/three/entry.php?id=114
 
-Alt+Enter
+* http://www.squidi.net/three/entry.php?id=122
 
-Adicionar ..\glfw\xx\include em Propriedades de Configuração > C/C++ > Geral > Diretórios de Inclusão Adicionais
+* http://www.squidi.net/three/entry.php?id=123
 
-Adicionar ..\glfw\xx\lib-vc2015 em Propriedades de Configuração > Vinculador > Geral > Diretórios de Biblioteca Adicionais
+* http://www.squidi.net/three/entry.php?id=128
 
-Adicionar glfw3.lib e opengl32.lib em Propriedades de Configuração > Vinculador > Entrada > Dependências Adicionais
+* http://www.squidi.net/three/entry.php?id=185
 
-Se quiser debugar com x32, tem que repetir os 3 passos anteriores com xx = 32
+* http://www.squidi.net/three/entry.php?id=187
+
+* http://www.squidi.net/three/entry.php?id=198
+
+* http://www.squidi.net/three/entry.php?id=211
+
+* http://www.squidi.net/three/entry.php?id=222
+
+* http://www.squidi.net/three/entry.php?id=242
+
+* http://www.squidi.net/three/entry.php?id=254
+
+### Características principais
+
+Dois sistemas planetários orbitando suas estrelas
+
+Cada jogador em um planeta de um sistema
+
+Ambos começam no planeta mais próximo à estrela
+
+Planetas e estrelas contêm massas e raios diversos, simétricos aos do o adversário
+
+Jogador pode:
+
+* construir foguetes
+* construir torretas
+* construir naves
+
+Foguetes:
+
+* demandam pedaço do planeta para seres contruídos
+* tiram pedaço grande de um planeta que atingem
+* têm propriedades diferentes
+
+Torretas:
+
+* demandam pedaço do planeta para seres contruídas
+* lançam foguetes catapultados de tempos em tempos
+* podem ser empilhadas
+* têm propriedades diferentes
+
+Naves:
+
+* demandam pedaço do planeta para seres contruídas
+* usadas para coletar pedaços de outro planeta do sistema do jogador
+* usadas para fugir para outro planeta do sistema do jogador
+
+Pedaço:
+
+* tirar um pedaço de um planeta significa diminuir a massa e raio do planeta
+* pedaço removido de planeta atingido por foguete é lançado na direção da normal ao centro do planeta
+* pedaço sofre aceleração pela gravidade do sistema
+* pedaço viajando no espaço que colide com planeta adiciona à massa e ao raio dele
+* pedaço viajando no espaço que colide com a estrela adiciona à massa e ao raio dela
+* estrela não perde pedaços
+
+Condições de vitória:
+
+* remover último pedaço do planeta do adversário sem ele ter nave
+* remover último pedaço do último planeta do adversário
+
+### Estilo
+
+Estratégia RTS + sobrevivência
+
+### Plataformas
+
+PC multiplayer
+
+### Arte conceitual
+
+![Imagem dos sistemas](https://snag.gy/4jCsok.jpg)
+
+tempo 0:
+
+* 2 sistemas com:
+
+	* 1 estrela
+
+	* 4 planetas
+
+	* 3 pedaços:
+
+		* 1 vai pra estrela
+
+		* 1 vai pra baixo mas talvez será puxado de volta eventualmente
+
+		* 1 será absorvido pelo planeta
+
+![Imagem dos sistemas](https://snag.gy/Dohwd8.jpg)
+
+tempo1:
+
+* 2 sistemas com:
+
+	* 1 estrela
+
+	* 4 planetas
+
+	* 3 pedaços:
+
+		* 1 está mais próxima ainda da estrela
+
+		* 1 foi mais para baixo mas talvez será puxado de volta eventualmente
+
+		* 1 já foi absorvido pelo planeta, então desapareu
